@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <script type=text/javascript src="{{
+        url_for('static', filename='index.js') }}"></script>
+    <head>
+        <title>Dota 2 Win Predictor</title>
+    </head>
+    <body>
+        Live Feed of surveillance footage
+        <!-- Stream video via webcam -->
+        <div class="video-wrap">
+                <video id="video" playsinline autoplay></video>
+        </div>
+        
+        <!-- Webcam video snapshot used in the eevent of a detection of a knife person -->
+        <canvas id="canvas" width="640" height="480"></canvas>
+    </body>
+</html>
