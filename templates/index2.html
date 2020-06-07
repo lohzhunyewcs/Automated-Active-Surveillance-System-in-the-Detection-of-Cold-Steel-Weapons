@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Test Page</title>
+        <style>
+            body {
+                margin:0;
+                background-color: #fff
+            }
+
+            ul {
+              list-style-type: none;
+              margin: 0;
+              padding: 0;
+              overflow: hidden;
+              background-color: #333;
+            }
+
+            li {
+              float: center;
+            }
+
+            li a {
+              display: block;
+              color: white;
+              text-align: center;
+              padding: 14px 16px;
+              text-decoration: none;
+            }
+
+            /* <!--li a:hover {-->
+              <!--background-color: #111;-->
+            <!--}--> */
+        </style>
+    </head>
+
+    <header>
+        <ul>
+            <li><a>Live Video Feed</a></li>
+        </ul>
+    </header>
+
+    <body>
+        <div class="container" style="min-height:100% width:80%">
+            {% block body %}
+                <p style="text-align: center;"><img src="{{ url_for('video_feed') }}"></p>
+            {% endblock %}
+        </div>
+
+        <div id="data" align="center">
+            nothing received yet
+        </div>
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='index.js') }}"></script>
+    </body>
+</html>
