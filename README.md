@@ -38,6 +38,18 @@ Command for installing dependencies below are prefixed with `pip install`:
  python web_server.py
  python client_server.py
 
+## Alternative method of setting up (MAC/ Linux)
+```
+./start.sh
+```
+If any permission problems are encountered, run this command to allow it to be executable
+```
+chmod +x setup_all.sh
+```
+
+##Alternative method of setting up (Windows)
+Run start_servers.bat
+
 You will be able to access the web app on your localhost:5555 after running the commands
 
 The code and dataset will be released when the project is over. 
