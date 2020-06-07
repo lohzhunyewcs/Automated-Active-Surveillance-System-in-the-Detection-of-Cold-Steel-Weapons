@@ -32,6 +32,12 @@ Command for installing dependencies below are prefixed with `pip install`:
   * pyzmq
   * six
   * Werkzeug
+  * flask_bootstrap
 
+## Starting the web app
+ python web_server.py
+ python client_server.py
+
+You will be able to access the web app on your localhost:5555 after running the commands
 
 The code and dataset will be released when the project is over. 
