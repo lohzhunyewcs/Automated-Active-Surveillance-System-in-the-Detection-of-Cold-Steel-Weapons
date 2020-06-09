@@ -44,28 +44,26 @@ def centerNetPredict(detector, img):
 class YoloConfig:
     def __init__(self, linux, coco=False):
         cfg = 'yolov3/cfg/yolov3-spp.cfg'
+        base_path = os.path.dirname(os.path.realpath(__file__)) + '\\'
         if linux:
             raise Exception('TODO!')
-            self.cfg = 'D:/GitLab_respos/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/models/yolov3/cfg/yolov3-spp.cfg'
             self.names = 'yolov3/data/coco.names'
             self.weights = "yolov3/yolov3-spp.pt"
             self.source = 'data/samples'#raise Exception # prob not needed
             self.output = "yolov3/output"
         else:
             if coco:
-                base_path = 'D:/GitLab_respos/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/dl_models/'
-                self.cfg = base_path + 'yolov3/cfg/yolov3-spp.cfg'
-                self.names = base_path + 'yolov3/data/coco.names'
-                self.weights = base_path + "yolov3/yolov3-spp.pt"
-                self.source = base_path +'yolov3/data/samples'#raise Exception # prob not needed
-                self.output = base_path + "yolov3/output"
+                self.cfg = base_path + 'yolov3\\cfg\\yolov3-spp.cfg'
+                self.names = base_path + 'yolov3\\data\\coco.names'
+                self.weights = base_path + "yolov3\\yolov3-spp.pt"
+                self.source = base_path +'yolov3\\data\\samples'#raise Exception # prob not needed
+                self.output = base_path + "yolov3\\output"
             else:
-                base_path = 'D:/GitLab_respos/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/dl_models/'
-                self.cfg = base_path + 'yolov3/cfg/yolov3-spp-knife.cfg'
-                self.names = base_path + 'yolov3/data/knife_only.names'
-                self.weights = base_path + "yolov3/weights/best_knife_only_spp_pretrained_cls_00001_2.pt"
-                self.source = base_path +'yolov3/data/samples'#raise Exception # prob not needed
-                self.output = base_path + "yolov3/output"
+                self.cfg = base_path + 'yolov3\\cfg\\yolov3-spp-knife.cfg'
+                self.names = base_path + 'yolov3\\data\\knife_only.names'
+                self.weights = base_path + "yolov3\\weights\\best_knife_only_spp_pretrained_cls_00001_2.pt"
+                self.source = base_path +'yolov3\\data\\samples'#raise Exception # prob not needed
+                self.output = base_path + "yolov3\\output"
         self.img_size = 416
         self.conf_thres = 0.3
         self.iou_thres = 0.6
@@ -80,19 +78,13 @@ class YoloConfig:
 
 # YOLOV3
 def yolov3(linux):
-    # image_path = "/home/student/Desktop/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/models/yolov3/meme.jpg"
-    # # os.system(f"cd yolov3")
-    # os.chdir("yolov3")
-    # os.system(f"python3 detect.py --source {image_path} --cfg cfg/yolov3-spp.cfg --weights yolov3-spp.pt")
-    # os.chdir("..")
-    # YOLOV3_PATH = '/home/student/Desktop/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/models/yolov3'
-    # sys.path.insert(0, YOLOV3_PATH)
 
     # Code
     if linux:
         YOLO_PATH= '/home/student/Desktop/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/dl_models/yolov3'
     else:
-        YOLO_PATH = 'D:\GitLab_respos\Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons\dl_models\yolov3'
+        base_path = os.path.dirname(os.path.realpath(__file__)) + '\\'
+        YOLO_PATH = base_path + 'yolov3'
     sys.path.insert(0, YOLO_PATH)
     from models import Darknet
     opt = YoloConfig(linux)
@@ -125,19 +117,14 @@ if __name__ == "__main__":
     # # CenterNeeet
     # centerNet = getCenterNetModel()
     linux = False
-    image_name = 'meme.jpg'
-    if linux:
-        img = f'/home/student/Desktop/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/test_images/{image_name}'
-    else:
-        img = f'D:/GitLab_respos/Automated-Active-Surveillance-System-in-the-Detection-of-Cold-Steel-Weapons/test_images/{image_name}'
-    # cv2_img = cv2.imread(img)
+    # image_name = 'meme.jpg'
     # print(cv2_img)
     # print(img)
     # result = centerNetPredict(centerNet, img)
     # print('done')
 
     # YOLO
-    yolo_model, opt = yolov3(linux=linux)
-    yolo_predict(yolo_model, opt, img)
+    # yolo_model, opt = yolov3(linux=linux)
+    # yolo_predict(yolo_model, opt, img)
     # YOLO DONE
 
