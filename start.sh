@@ -1,3 +1,3 @@
 #!/bin/bash
-python server.py
-python client.py
+python web_server.py
+python client_server.py
