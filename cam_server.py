@@ -37,7 +37,7 @@ if __name__ == '__main__':
         # frame = open("termi.jpg", 'rb').read()
         img = cv2.resize(img, (1020, 1020))
         got_knife = True
-        img, got_knife = yolo_predict(yolo_model, opt, image=img, to_read_img=False)
+        # img, got_knife = yolo_predict(yolo_model, opt, image=img, to_read_img=False)
         frame = cv2.imencode('.jpg', img)[1].tobytes()
         # Process frame
         # -------------------------------------------------------
