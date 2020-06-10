@@ -2,15 +2,86 @@ import zmq
 import json
 import base64
 import cv2
+import timeit
+import os
 # import slack
 import datetime
 from dl_models.driver import yolov3, yolo_predict
 
+def live_feed(yolo_model, opt, video=None):
+    prev = 1
+    curr = 0
+    if video is None:
+        # vc = cv2.VideoCapture(0)
+        vc = cv2.VideoCapture(sources[curr])
+
+
+
+
+    else:
+        vc = cv2.VideoCapture(f'data/demo_video/{video}')
+
+    if not vc.isOpened():
+        raise Exception()
+
+
+    while vc.isOpened():
+        if prev != curr:
+            prev = curr
+            vc = cv2.VideoCapture(sources[curr])
+
+        if vc.isOpened():
+            _, img = vc.read()
+            # frame = open("termi.jpg", 'rb').read()
+            img = cv2.resize(img, (1366, 768))
+            #got_knife = True
+            img, got_knife = yolo_predict(yolo_model, opt, image=img, to_read_img=False)
+            frame = cv2.imencode('.jpg', img)[1].tobytes()
+            # Process frame
+            # -------------------------------------------------------
+
+            # if detected[0] != detected[1]:
+            #     if detected[0]:
+            #         Client.chat_postMessage(channel="C014DQ23Q8J",
+            #                                 text='Knife detection start: '+datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+            #     else:
+            #         Client.chat_postMessage(channel="C014DQ23Q8J",
+            #                                 text='Knife detection end: '+datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+            # # Update detected
+            # detected[1] = detected[0]
+            # detected[0] = True
+
+            data = json.dumps({
+                "frame": base64.encodebytes(frame).decode("utf-8"),
+                "knife": got_knife
+            })
+            # Send processed frame to model
+            sock.send_multipart([b"key1", bytes(data,"UTF-8")])
+            # topic = random.randrange(9999,10005)
+            # messagedata = random.randrange(1,215) - 80
+            # sock.send_string("%d %s" % (10001, str(data)))
+            # print("Sent "+str(base64.encodebytes(frame).decode("utf-8")))
+            try:
+                [_, data] = sock2.recv_multipart(flags=zmq.NOBLOCK)
+                print(data)
+                if int(data) - 1 < len(sources):
+                    curr = int(data) - 1
+            except Exception:
+                curr = curr
+    vc.release()
+
 if __name__ == '__main__':
     # app.debug = True
     # app.run(host='localhost', port=5000)
+    sources = []
+    f = open("IP_ADDRESSES_4", "r")
+    for url in f:
+        url2 = url.strip()
+        sources.append(url2)
+    print(sources)
 
     PORT = "5555"
+    PORT2 = "5556"
     # SLACK_BOT_USER_TOKEN='xoxb-1008563764053-1135041192726-BmfcvU2h0zjMkeh6nph07zHD'
     SLACK_BOT_USER_TOKEN='xoxb-1150026834819-1150038591571-MivgMsLbDG2XcDfNFzhIGicR'
     detected = [True, False]
@@ -18,7 +89,11 @@ if __name__ == '__main__':
     context = zmq.Context()
     sock = context.socket(zmq.PUB)
     sock.bind("tcp://*:{}".format(PORT))
+    # Non-blocking receive
+    sock2 = context.socket(zmq.SUB)
+    sock2.connect("tcp://localhost:{}".format(PORT2))
 
+    sock2.subscribe(str.encode(PORT2))
     # # Create a SlackClient for your bot to use for Web API requests
     # slack_bot_token = SLACK_BOT_USER_TOKEN
     # Client = slack.WebClient(slack_bot_token)
@@ -28,38 +103,34 @@ if __name__ == '__main__':
 
 
     # vc = cv2.VideoCapture(0)
-    vc = cv2.VideoCapture('data/demo_video/MVI_3258(edited).mp4')
-    if not vc.isOpened():
-        raise Exception()
-    # while True:
-    while vc.isOpened():
-        _, img = vc.read()
-        # frame = open("termi.jpg", 'rb').read()
-        img = cv2.resize(img, (1020, 1020))
-        got_knife = True
-        img, got_knife = yolo_predict(yolo_model, opt, image=img, to_read_img=False)
-        frame = cv2.imencode('.jpg', img)[1].tobytes()
-        # Process frame
-        # -------------------------------------------------------
+    # For time testing
+    video_list = os.listdir('data/demo_video')
+    print(f'video_list = {video_list}')
+    with open('data/video_timer.csv', 'w') as video_timer_file:
+        video_timer_file.write(f'video_name,video_actual_time,time_taken\n')
+        for video in video_list:
+            print(f'on video: {video}')
+            # Time used by our model
+            start = timeit.default_timer()
+            try:
+                live_feed(yolo_model, opt, video)
+            except Exception:
+                pass
+            end = timeit.default_timer()
+            # Actual video time
+            vidCap = cv2.VideoCapture(f'data/demo_video/{video}')
+            fps = vidCap.get(cv2.CAP_PROP_FPS)
+            totalNoFrames = vidCap.get(cv2.CAP_PROP_FRAME_COUNT)
+            try:
+                actual_time = float(totalNoFrames) / float(fps)
+            except ZeroDivisionError:
+                actual_time = "N/A"
+                print(f'{video} frame rates could not be found')
+                print(f'fps:{fps},totalNoFrames: {totalNoFrames}')
+            result = f'{video},{actual_time},{end - start}\n'
+            video_timer_file.write(result)
+            vidCap.release()
 
-        # if detected[0] != detected[1]:
-        #     if detected[0]:
-        #         Client.chat_postMessage(channel="C014DQ23Q8J",
-        #                                 text='Knife detection start: '+datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-        #     else:
-        #         Client.chat_postMessage(channel="C014DQ23Q8J",
-        #                                 text='Knife detection end: '+datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-        # # Update detected
-        # detected[1] = detected[0]
-        # detected[0] = True
 
-        data = json.dumps({
-            "frame": base64.encodebytes(frame).decode("utf-8"),
-            "knife": got_knife
-        })
-        # Send processed frame to model
-        sock.send_multipart([b"key1", bytes(data,"UTF-8")])
-        # topic = random.randrange(9999,10005)
-        # messagedata = random.randrange(1,215) - 80
-        # sock.send_string("%d %s" % (10001, str(data)))
-        # print("Sent "+str(base64.encodebytes(frame).decode("utf-8")))
+    # Webcam feed
+    live_feed(yolo_model, opt)

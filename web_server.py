@@ -5,6 +5,7 @@ from flask import Flask, flash, render_template, Response, stream_with_context, 
 from flask_bootstrap import Bootstrap
 from flask_socketio import SocketIO, emit
 import cv2
+import os
 from datetime import datetime
 import numpy as np
 
@@ -28,6 +29,16 @@ socketio = SocketIO(app)
 def index():
     return render_template('index.html')
 
+
+@app.route('/index', methods=["GET", "POST"])
+def dropdown():
+    if request.method == "POST":
+        req = request.form
+        camera = req["camera"]
+        print(camera)
+
+        sock_send.send_multipart([str.encode(PORT2), str.encode(camera)])
+    return render_template('index.html')
 
 @app.route('/video_feed')
 def video_feed():
@@ -87,10 +98,10 @@ def gen():
                 vid_name2 = "project.mp4"
                 # out = cv2.VideoWriter(vid_name2, get_video_type(vid_name), 30, size)
                 print(vid_name)
-                out = cv2.VideoWriter(vid_name, cv2.VideoWriter_fourcc(*'XVID'), 5, size)
-                for i in range(len(img_array)):
-                    out.write(img_array[i])
-                out.release()
+                #out = cv2.VideoWriter(vid_name, cv2.VideoWriter_fourcc(*'XVID'), 5, size)
+                # for i in range(len(img_array)):
+                #     out.write(img_array[i])
+                #out.release()
                 img_array = []
                 prev_state = False
         # Display
@@ -106,6 +117,17 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     knife_detected = [False]
+    PORT = "5555"
+    PORT2 = "5556"
+
+    context = zmq.Context()
+    sock = context.socket(zmq.SUB)
+    sock.connect("tcp://localhost:{}".format(PORT))
+    sock.subscribe(str.encode(PORT))
+
+    sock_send = context.socket(zmq.PUB)
+    sock_send.bind("tcp://*:{}".format(PORT2))
+
     app.debug = True
     app.config['SECRET_KEY'] = 'secretkey'
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='localhost', port=5001, use_reloader = False)

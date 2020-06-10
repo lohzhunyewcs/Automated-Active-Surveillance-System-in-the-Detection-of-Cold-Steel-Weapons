@@ -91,8 +91,27 @@
                                 <div class="container" style="min-height:100% width:80%">
                                 <p style="text-align: center;"><img src="{{ url_for('video_feed') }}"></p>
                                 </div>
+                                <form action = "/index" method = "POST">
+                                <div class="form-group">
+                                    <label>Camera </label>
+                                    <input class=""form-control type="text" name="camera">
+                                </div>
+
+                                <button type= "submit" class = "btn btn-primary"> Click here </button>
+
+                                </form>
+
+                                <style>
+                                    form {
+                                    margin: 0 auto;
+                                    width:250px;
+                                    text-align: center;
+                                    }
+                                </style>
 
                                 <div id="data" align="center">
+
+
                                     nothing received yet
                                 </div>
                             </th>
