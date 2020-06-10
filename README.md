@@ -3,11 +3,18 @@ In our final year project, we will be creating a website that will be able to pr
 
 We will be testing at least 4 of the following networks to detect the cold steel weapons:
 1) YOLOV3-spp
-2) YOLACT
-3) CenterNet
-4) CenterMask2
+2) YOLACT *
+3) CenterNet *
+4) CenterMask2 *
+*Due to time constraints, we were not able to label for instance segmentation nor train these
+models.
 
 We have made our own dataset of cold steel weapons and will be using it as a factor in determining which networks we will use.
+## Installation
+1) git clone this repo
+2) git clone https://github.com/ultralytics/yolov3 into dl_models
+3) Copy our detect.py to replace theirs
+4) Download our config and weights and put it into their respective folders.
 
 ## Dependencies
 We recommend using `pip` to install the necessary Python modules.
@@ -47,9 +54,10 @@ If any permission problems are encountered, run this command to allow it to be e
 chmod +x setup_all.sh
 ```
 
-##Alternative method of setting up (Windows)
+## Alternative method of setting up (Windows)
 Run start_servers.bat
 
 You will be able to access the web app on your localhost:5555 after running the commands
 
-The code and dataset will be released when the project is over. 
+## Configs and Weights for Yolov3
+https://drive.google.com/drive/folders/1FkghbmFkyOLJsmbHB3HzQCb3FYmUqhk2?usp=sharing
