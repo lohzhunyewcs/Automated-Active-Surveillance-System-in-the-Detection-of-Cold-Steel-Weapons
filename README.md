@@ -15,6 +15,7 @@ We have made our own dataset of cold steel weapons and will be using it as a fac
 2) git clone https://github.com/ultralytics/yolov3 into dl_models
 3) Copy our detect.py to replace theirs
 4) Download our config and weights and put it into their respective folders.
+5) Download the knifes.names and put under data folder
 
 ## Dependencies
 We recommend using `pip` to install the necessary Python modules.
