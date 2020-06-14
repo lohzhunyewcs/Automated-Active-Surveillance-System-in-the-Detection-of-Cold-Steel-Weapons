@@ -13,9 +13,8 @@ def live_feed(yolo_model, opt, video=None):
     curr = 0
     if video is None:
         # vc = cv2.VideoCapture(0)
+
         vc = cv2.VideoCapture(sources[curr])
-
-
 
 
     else:
@@ -28,7 +27,10 @@ def live_feed(yolo_model, opt, video=None):
     while vc.isOpened():
         if prev != curr:
             prev = curr
-            vc = cv2.VideoCapture(sources[curr])
+            try:
+                vc = cv2.VideoCapture(sources[curr])
+            except cv2.error as e:
+                print("Please Refresh your Page and reload Camera")
 
         if vc.isOpened():
             _, img = vc.read()
@@ -64,8 +66,12 @@ def live_feed(yolo_model, opt, video=None):
             try:
                 [_, data] = sock2.recv_multipart(flags=zmq.NOBLOCK)
                 print(data)
-                if int(data) - 1 < len(sources):
-                    curr = int(data) - 1
+                try:
+                    if int(data) < len(sources)-1:
+                        curr = int(data)
+                        print(sources[curr])
+                except ValueError:
+                    print("Wrong Input")
             except Exception:
                 curr = curr
     vc.release()
@@ -73,8 +79,8 @@ def live_feed(yolo_model, opt, video=None):
 if __name__ == '__main__':
     # app.debug = True
     # app.run(host='localhost', port=5000)
-    sources = []
-    f = open("IP_ADDRESSES_4", "r")
+    sources = [0]
+    f = open("IP_ADDRESSES_4.txt", "r")
     for url in f:
         url2 = url.strip()
         sources.append(url2)
@@ -133,4 +139,4 @@ if __name__ == '__main__':
 
 
     # Webcam feed
-    live_feed(yolo_model, opt)
+    #live_feed(yolo_model, opt)
